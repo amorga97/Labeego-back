@@ -18,16 +18,6 @@ export class UserCrudService {
         return 'This action adds a new userCrud';
     }
 
-    async login(nameToCheck: string, pwToCheck: string) {
-        const savedUser = await this.User.findOne({ userName: nameToCheck });
-        if (!savedUser) {
-            throw new NotFoundException();
-        } else if (compareSync(pwToCheck, (savedUser as ifUser).password)) {
-        } else {
-            throw new UnauthorizedException();
-        }
-    }
-
     findAll() {
         return `This action returns all userCrud`;
     }

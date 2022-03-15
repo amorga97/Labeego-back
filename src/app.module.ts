@@ -5,6 +5,7 @@ import LogsMiddleware from './utils/logs.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserCrudModule } from './Users/user-crud.module';
+import { LoginModule } from './login/login.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -18,6 +19,7 @@ import { UserCrudModule } from './Users/user-crud.module';
             }?retryWrites=true&w=majority`,
         ),
         UserCrudModule,
+        LoginModule,
     ],
     controllers: [AppController],
     providers: [AppService],
