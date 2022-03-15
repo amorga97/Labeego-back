@@ -6,7 +6,7 @@ const isEmail = (email: string) => {
 };
 
 export const userSchema = new mongoose.Schema({
-    name: {
+    userName: {
         type: String,
         required: true,
         lowercase: true,
@@ -21,6 +21,7 @@ export const userSchema = new mongoose.Schema({
         maxlength: 15,
     },
     userImage: { type: String, required: false },
+    password: { type: String, required: true },
     role: { type: String, required: true },
     mail: {
         type: String,
@@ -32,7 +33,8 @@ export const userSchema = new mongoose.Schema({
 
 export interface ifUser {
     _id?: mongoose.Types.ObjectId;
-    name: string;
+    userName: string;
+    password: string;
     surname: string;
     userImage: string;
     role: string;
