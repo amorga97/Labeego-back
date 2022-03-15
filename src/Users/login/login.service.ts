@@ -1,8 +1,4 @@
-import {
-    Injectable,
-    NotFoundException,
-    UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { compareSync } from 'bcryptjs';
 import { Model } from 'mongoose';
@@ -15,7 +11,7 @@ export class LoginService {
     async login(nameToCheck: string, pwToCheck: string) {
         const savedUser = await this.User.findOne({ userName: nameToCheck });
         if (!savedUser) {
-            throw new NotFoundException();
+            throw new UnauthorizedException();
         } else if (compareSync(pwToCheck, (savedUser as ifUser).password)) {
             return savedUser;
         } else {
