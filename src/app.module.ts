@@ -4,6 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 import LogsMiddleware from './utils/logs.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UserCrudModule } from './Users/user-crud.module';
+import { LoginModule } from './Users/login/login.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -16,6 +18,8 @@ import { AppService } from './app.service';
                     : process.env.DBNAME
             }?retryWrites=true&w=majority`,
         ),
+        UserCrudModule,
+        LoginModule,
     ],
     controllers: [AppController],
     providers: [AppService],
