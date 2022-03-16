@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AuthService } from 'src/utils/auth.service';
+import { AuthService } from '../../utils/auth.service';
 import { LoginService } from './login.service';
 
 @Controller('users/login')
@@ -17,6 +17,6 @@ export class LoginController {
             body.password,
         );
 
-        return this.Auth.createToken(savedUser.id, savedUser.role, secret);
+        return this.Auth.createToken(savedUser.id, savedUser.admin, secret);
     }
 }
