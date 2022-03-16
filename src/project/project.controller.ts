@@ -1,34 +1,50 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Headers,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+    constructor(private readonly projectService: ProjectService) {}
 
-  @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectService.create(createProjectDto);
-  }
+    @Post()
+    create(
+        @Body() createProjectDto: CreateProjectDto,
+        @Headers('Authorization') token: string,
+    ) {
+        return this.projectService.create(createProjectDto, token);
+    }
 
-  @Get()
-  findAll() {
-    return this.projectService.findAll();
-  }
+    @Get()
+    findAll(@Headers('Authorization') token: string) {
+        return this.projectService.findAll(token);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(+id);
-  }
+    @Get(':id')
+    findOne(@Param('id') id: string, @Headers('Authorization') token: string) {
+        return this.projectService.findOne(id, token);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectService.update(+id, updateProjectDto);
-  }
+    @Patch(':id')
+    update(
+        @Param('id') id: string,
+        @Body() updateProjectDto: UpdateProjectDto,
+        @Headers('Authorization') token: string,
+    ) {
+        return this.projectService.update(id, updateProjectDto, token);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectService.remove(+id);
-  }
+    @Delete(':id')
+    remove(@Param('id') id: string, @Headers('Authorization') token: string) {
+        return this.projectService.remove(id, token);
+    }
 }
