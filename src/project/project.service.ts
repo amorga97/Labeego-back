@@ -33,8 +33,15 @@ export class ProjectService {
         return `This action returns all project`;
     }
 
-    findOne(id: string, token: string) {
-        return this.Project.findById(id).populate('tasks', { _id: 0, __v: 0 });
+    async findOne(id: string, token: string) {
+        const tokenData = this.auth.validateToken(
+            token.substring(7),
+            process.env.SECRET,
+        ) as JwtPayload;
+        return await this.Project.findOne({
+            _id: id,
+            user: tokenData.id,
+        }).populate('tasks', { __v: 0 });
     }
 
     update(id: string, updateProjectDto: UpdateProjectDto, token: string) {
