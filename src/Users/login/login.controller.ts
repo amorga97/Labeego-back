@@ -11,11 +11,11 @@ export class LoginController {
 
     @Post()
     async login(@Body() body: { password: string; userName: string }) {
+        const secret = process.env.SECRET;
         const savedUser = await this.LoginServ.login(
             body.userName,
             body.password,
         );
-        const secret = process.env.SECRET;
 
         return this.Auth.createToken(savedUser.id, savedUser.role, secret);
     }
