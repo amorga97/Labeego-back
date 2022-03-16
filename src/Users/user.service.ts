@@ -3,10 +3,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ifUser } from 'src/models/user.model';
+import { ifPartialUser, ifUser } from 'src/models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
-import { UpdateUserDto } from './dto/update-user-crud.dto';
 
 @Injectable()
 export class UserCrudService {
@@ -46,7 +45,7 @@ export class UserCrudService {
             .populate('team', { password: 0 });
     }
 
-    async update(id: string, body: UpdateUserDto) {
+    async update(id: string, body: ifPartialUser) {
         return await this.User.findByIdAndUpdate(id, body, { new: true });
     }
 

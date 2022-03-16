@@ -9,7 +9,7 @@ describe('Given RegisterService', () => {
 
     const mockUserToAdd = {
         userName: 'pepe',
-        surname: 'lopez',
+        name: 'lopez',
         password: '12345',
         mail: 'pepemola@gmail.com',
         userImage: 'some url',
