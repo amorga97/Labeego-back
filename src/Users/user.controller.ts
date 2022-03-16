@@ -7,24 +7,29 @@ import {
     Param,
     Delete,
     Headers,
-    Logger,
+    UnauthorizedException,
 } from '@nestjs/common';
 import { UserCrudService } from './user.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
 import { UpdateUserDto } from './dto/update-user-crud.dto';
 
 @Controller('users')
-export class UserCrudController {
+export class UserController {
     constructor(private readonly userCrudService: UserCrudService) {}
 
     @Post('new')
-    create(
+    async create(
         @Body() createUserDto: CreateUserDto,
         @Headers('authorization') token: string,
     ) {
-        const logger = new Logger();
-        logger.log(token);
-        return this.userCrudService.create(createUserDto, token.substring(7));
+        try {
+            return await this.userCrudService.create(
+                createUserDto,
+                token.substring(7),
+            );
+        } catch (err) {
+            throw new UnauthorizedException();
+        }
     }
 
     @Get()
