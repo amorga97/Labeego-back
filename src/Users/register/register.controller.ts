@@ -1,4 +1,4 @@
-import { Body, Controller, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { ifUser } from 'src/models/user.model';
 import { AuthService } from 'src/utils/auth.service';
