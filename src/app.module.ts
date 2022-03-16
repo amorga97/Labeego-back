@@ -4,7 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import LogsMiddleware from './utils/logs.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { UserCrudModule } from './Users/user-crud.module';
+import { UserCrudModule } from './Users/user.module';
 import { LoginModule } from './Users/login/login.module';
 import { RegisterModule } from './Users/register/register.module';
 @Module({

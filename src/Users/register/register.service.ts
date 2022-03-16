@@ -7,6 +7,6 @@ import { ifUser } from 'src/models/user.model';
 export class RegisterService {
     constructor(@InjectModel('User') private User: Model<ifUser>) {}
     registerUser(userToAdd: ifUser) {
-        return this.User.create(userToAdd);
+        return this.User.create({ ...userToAdd, admin: true, team: [] });
     }
 }
