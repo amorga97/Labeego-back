@@ -1,7 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { userSchema } from '../../models/user.model';
+import { userSchema } from '../models/user.model';
 import { RegisterService } from './register.service';
 
 describe('Given RegisterService', () => {

@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { LoginController } from './login.controller';
 import { LoginService } from './login.service';
-import { AuthService } from '../../utils/auth.service';
+import { AuthService } from '../utils/auth.service';
 
 describe('Given the controller in login.controller.ts', () => {
     const mockLoginData = { password: '12345', userName: 'Pepe' };

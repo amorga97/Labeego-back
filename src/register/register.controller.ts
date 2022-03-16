@@ -1,7 +1,7 @@
 import { Body, Controller, Logger, Post } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { ifUser } from '../../models/user.model';
-import { AuthService } from '../../utils/auth.service';
+import { ifUser } from '../models/user.model';
+import { AuthService } from '../utils/auth.service';
 import { RegisterService } from './register.service';
 
 @Controller('users/register')
