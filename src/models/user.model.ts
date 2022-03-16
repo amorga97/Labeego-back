@@ -13,13 +13,14 @@ export const userSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 15,
     },
-    surname: {
+    name: {
         type: String,
         required: true,
         lowercase: true,
         minlength: 3,
         maxlength: 15,
     },
+    teamLeader: { type: mongoose.SchemaTypes.ObjectId },
     userImage: { type: String, required: false },
     password: { type: String, required: true },
     admin: { type: Boolean, default: false },
@@ -28,16 +29,31 @@ export const userSchema = new mongoose.Schema({
         required: true,
         validate: [isEmail, 'You did not enter a valid email adress'],
     },
+    team: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'User' }],
     projects: [mongoose.SchemaTypes.ObjectId],
 });
 
 export interface ifUser {
     _id?: mongoose.Types.ObjectId;
+    teamLeader?: mongoose.Types.ObjectId;
     userName: string;
     password: string;
-    surname: string;
+    name: string;
     userImage: string;
     admin?: boolean;
+    team?: mongoose.Types.ObjectId[];
     mail: string;
     projects: mongoose.Types.ObjectId[];
+}
+
+export interface ifPartialUser {
+    _id?: mongoose.Types.ObjectId;
+    teamLeader?: mongoose.Types.ObjectId;
+    userName?: string;
+    password?: string;
+    name?: string;
+    userImage?: string;
+    admin?: boolean;
+    mail?: string;
+    projects?: mongoose.Types.ObjectId[];
 }
