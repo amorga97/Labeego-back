@@ -12,7 +12,6 @@ import {
 import { UserCrudService } from './user.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
 import { UpdateUserDto } from './dto/update-user-crud.dto';
-import { ifPartialUser } from '../models/user.model';
 
 @Controller('users')
 export class UserCrudController {
@@ -39,16 +38,12 @@ export class UserCrudController {
     }
 
     @Patch(':id')
-    update(
-        @Param('id') id: string,
-        // @Body() updateUserCrudDto: UpdateUserCrudDto,
-        @Body() body: ifPartialUser,
-    ) {
-        return this.userCrudService.update(id, body);
+    update(@Param('id') id: string, @Body() updateUserCrudDto: UpdateUserDto) {
+        return this.userCrudService.update(id, updateUserCrudDto);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: string) {
-        return this.userCrudService.remove(id);
+    remove(@Param('id') id: string, @Headers('Authorization') token: string) {
+        return this.userCrudService.remove(id, token.substring(7));
     }
 }

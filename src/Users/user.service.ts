@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ifPartialUser, ifUser } from 'src/models/user.model';
+import { ifUser } from 'src/models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
 import { UpdateUserDto } from './dto/update-user-crud.dto';
@@ -46,11 +46,21 @@ export class UserCrudService {
             .populate('team', { password: 0 });
     }
 
-    async update(id: string, body: ifPartialUser) {
+    async update(id: string, body: UpdateUserDto) {
         return await this.User.findByIdAndUpdate(id, body, { new: true });
     }
 
-    async remove(id: string) {
-        return await this.User.findByIdAndDelete(id);
+    async remove(id: string, token: string) {
+        const adminData = this.auth.validateToken(
+            token,
+            process.env.SECRET,
+        ) as JwtPayload;
+        const deletedUser = await this.User.findByIdAndDelete(id);
+        if (adminData.admin) {
+            this.User.findByIdAndUpdate(adminData.id, {
+                $pull: [{ _id: deletedUser._id }],
+            });
+        }
+        return deletedUser;
     }
 }
