@@ -21,7 +21,7 @@ export class RegisterController {
         const secret = process.env.SECRET;
         return this.Auth.createToken(
             savedUser._id.toString(),
-            savedUser.role,
+            savedUser.admin,
             secret,
         );
     }
