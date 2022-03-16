@@ -37,7 +37,7 @@ export interface ifUser {
     password: string;
     surname: string;
     userImage: string;
-    admin: boolean;
+    admin?: boolean;
     mail: string;
     projects: mongoose.Types.ObjectId[];
 }
