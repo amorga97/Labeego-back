@@ -6,6 +6,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserCrudModule } from './Users/user-crud.module';
 import { LoginModule } from './Users/login/login.module';
+import { RegisterModule } from './Users/register/register.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -20,6 +21,7 @@ import { LoginModule } from './Users/login/login.module';
         ),
         UserCrudModule,
         LoginModule,
+        RegisterModule,
     ],
     controllers: [AppController],
     providers: [AppService],

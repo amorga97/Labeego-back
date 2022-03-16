@@ -22,7 +22,7 @@ export const userSchema = new mongoose.Schema({
     },
     userImage: { type: String, required: false },
     password: { type: String, required: true },
-    role: { type: String, required: true },
+    admin: { type: Boolean, default: false },
     mail: {
         type: String,
         required: true,
