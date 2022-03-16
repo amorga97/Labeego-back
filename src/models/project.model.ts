@@ -30,7 +30,7 @@ export const projectSchema = new mongoose.Schema({
     },
     appointment: { type: Date, required: false },
     lastUpdate: { type: Date, required: false },
-    tasks: { type: Array },
+    tasks: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
 });
 
 export interface ifProject {

@@ -34,7 +34,7 @@ export class ProjectService {
     }
 
     findOne(id: string, token: string) {
-        return `This action returns a #${id} project`;
+        return this.Project.findById(id).populate('tasks', { _id: 0, __v: 0 });
     }
 
     update(id: string, updateProjectDto: UpdateProjectDto, token: string) {
