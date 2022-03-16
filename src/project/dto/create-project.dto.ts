@@ -22,6 +22,9 @@ export class CreateProjectDto {
     @IsObject()
     client: mongoose.Types.ObjectId;
 
+    @IsObject()
+    teamLeader: mongoose.Types.ObjectId;
+
     @IsString()
     @Matches('to do')
     @Matches('to review')

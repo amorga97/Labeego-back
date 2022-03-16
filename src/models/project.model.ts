@@ -15,6 +15,7 @@ export const projectSchema = new mongoose.Schema({
         minlength: 3,
         maxlength: 15,
     },
+    teamLeader: { type: mongoose.SchemaTypes.ObjectId },
     user: {
         type: mongoose.SchemaTypes.ObjectId,
         required: true,
@@ -33,12 +34,27 @@ export const projectSchema = new mongoose.Schema({
 });
 
 export interface ifProject {
+    _id?: mongoose.Types.ObjectId;
     title: string;
     ref: string;
     user: mongoose.Types.ObjectId;
     client: mongoose.Types.ObjectId;
+    teamLeader: { type: mongoose.Types.ObjectId };
     status: string;
     appointment: Date;
     lastUpdate: Date;
     tasks: mongoose.Types.ObjectId[];
+}
+
+export interface ifPartialProject {
+    _id?: mongoose.Types.ObjectId;
+    title?: string;
+    ref?: string;
+    user?: mongoose.Types.ObjectId;
+    client?: mongoose.Types.ObjectId;
+    teamLeader?: { type: mongoose.Types.ObjectId };
+    status?: string;
+    appointment?: Date;
+    lastUpdate?: Date;
+    tasks?: mongoose.Types.ObjectId[];
 }
