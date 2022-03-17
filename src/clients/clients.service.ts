@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ifClient } from 'src/models/client.model';
@@ -20,14 +20,25 @@ export class ClientsService {
     }
 
     async findOne(id: string) {
-        return await this.Client.findById(id);
+        if (await this.Client.exists({ _id: id })) {
+            return await this.Client.findById(id);
+        }
+        throw new NotFoundException();
     }
 
     async update(id: string, newData: UpdateClientDto) {
-        return await this.Client.findByIdAndUpdate(id, newData, { new: true });
+        if (await this.Client.exists({ _id: id })) {
+            return await this.Client.findByIdAndUpdate(id, newData, {
+                new: true,
+            });
+        }
+        throw new NotFoundException();
     }
 
     async remove(id: string) {
-        return await this.Client.findByIdAndDelete(id);
+        if (await this.Client.exists({ _id: id })) {
+            return await this.Client.findByIdAndDelete(id);
+        }
+        throw new NotFoundException();
     }
 }
