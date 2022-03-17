@@ -112,11 +112,17 @@ export class ProjectService {
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
+            this.User.findByIdAndUpdate(tokenData.id, {
+                $pull: { projects: id },
+            });
             deletedProject = await this.Project.findOneAndDelete({
                 _id: id,
                 teamLeader: tokenData.id,
             });
         } else {
+            this.User.findByIdAndUpdate(tokenData.id, {
+                $pull: { projects: id },
+            });
             deletedProject = await this.Project.findOneAndDelete({
                 _id: id,
                 user: tokenData.id,
