@@ -2,9 +2,9 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
-import { ifProject } from 'src/models/project.model';
-import { ifUser } from 'src/models/user.model';
-import { AuthService } from 'src/utils/auth.service';
+import { ifProject } from '../models/project.model';
+import { ifUser } from '../models/user.model';
+import { AuthService } from '../utils/auth.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
