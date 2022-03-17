@@ -9,3 +9,23 @@ export const clientSchema = new mongoose.Schema({
     },
     projects: [mongoose.SchemaTypes.ObjectId],
 });
+
+export interface ifClient {
+    _id?: mongoose.Types.ObjectId;
+    name: string;
+    address: {
+        street: string;
+        number: number;
+    };
+    projects: mongoose.Types.ObjectId[];
+}
+
+export interface ifPartialClient {
+    _id?: mongoose.Types.ObjectId;
+    name?: string;
+    address?: {
+        street?: string;
+        number?: number;
+    };
+    projects?: mongoose.Types.ObjectId[];
+}
