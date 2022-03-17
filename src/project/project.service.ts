@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
@@ -22,7 +26,7 @@ export class ProjectService {
             process.env.SECRET,
         ) as JwtPayload;
         const UserData = await this.User.findById(tokenData.id);
-        return await this.Project.create({
+        const savedProject = await this.Project.create({
             ...newProject,
             teamLeader: UserData.teamLeader,
             user: UserData._id,
@@ -30,35 +34,47 @@ export class ProjectService {
             client: new Types.ObjectId(newProject.client),
             status: 'to do',
         });
+        this.User.findByIdAndUpdate(UserData._id, {
+            $push: { projects: savedProject._id },
+        });
+        return savedProject;
     }
 
-    findAll(token: string) {
+    async findAll(token: string) {
         const tokenData = this.auth.validateToken(
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
-            return this.Project.find({
+            return await this.Project.find({
                 teamLeader: tokenData.id,
             });
         }
-        return this.Project.find({ user: tokenData.id });
+        return await this.Project.find({ user: tokenData.id });
     }
 
     async findOne(id: string, token: string) {
+        let projectToReturn: ifProject;
         const tokenData = this.auth.validateToken(
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
-            return await this.Project.findById(id).populate('tasks', {
+            projectToReturn = await this.Project.findOne({
+                _id: id,
+                teamLeader: tokenData.id,
+            }).populate('tasks', {
                 __v: 0,
             });
         }
-        return await this.Project.findOne({
+        projectToReturn = await this.Project.findOne({
             _id: id,
             user: tokenData.id,
         }).populate('tasks', { __v: 0 });
+
+        if (!projectToReturn) throw new NotFoundException();
+
+        return projectToReturn;
     }
 
     async update(id: string, updatedProject: UpdateProjectDto, token: string) {
@@ -66,38 +82,45 @@ export class ProjectService {
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
-        if (tokenData.admin) {
-            return this.Project.findOneAndUpdate(
-                { _id: id, teamLeader: tokenData.id },
+        try {
+            if (tokenData.admin) {
+                console.log('pepe');
+                return await this.Project.findOneAndUpdate(
+                    { _id: id, teamLeader: tokenData.id },
+                    { ...updatedProject, lastUpdate: new Date() },
+                    { new: true },
+                );
+            }
+            return await this.Project.findOneAndUpdate(
+                { _id: id, user: tokenData.id },
                 { ...updatedProject, lastUpdate: new Date() },
                 { new: true },
             );
+        } catch (err) {
+            throw new NotFoundException();
         }
-        return this.Project.findOneAndUpdate(
-            { _id: id, user: tokenData.id },
-            { ...updatedProject, lastUpdate: new Date() },
-            { new: true },
-        );
     }
 
-    remove(id: string, token: string) {
+    async remove(id: string, token: string) {
+        let deletedProject: ifProject;
         const tokenData = this.auth.validateToken(
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
-            return this.Project.findOneAndDelete({
+            deletedProject = await this.Project.findOneAndDelete({
                 _id: id,
                 teamLeader: tokenData.id,
             });
-        }
-        try {
-            return this.Project.findOneAndDelete({
+        } else {
+            deletedProject = await this.Project.findOneAndDelete({
                 _id: id,
                 user: tokenData.id,
             });
-        } catch (err) {
-            throw new UnauthorizedException();
         }
+
+        if (!deletedProject) throw new UnauthorizedException();
+
+        return deletedProject;
     }
 }
