@@ -1,26 +1,72 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { ifProject } from 'src/models/project.model';
+import { ifTask } from '../models/task.model';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
-  }
+    constructor(
+        @InjectModel('Task') private readonly Task: Model<ifTask>,
+        @InjectModel('Project') private readonly Project: Model<ifProject>,
+    ) {}
 
-  findAll() {
-    return `This action returns all tasks`;
-  }
+    async create(projectId: string, taskData: CreateTaskDto) {
+        if (await this.Project.exists({ _id: projectId })) {
+            const savedTask = await this.Task.create({
+                ...taskData,
+                project: projectId,
+            });
+            await this.Project.findByIdAndUpdate(projectId, {
+                $push: { tasks: savedTask._id },
+            });
+            return savedTask;
+        }
+        throw new NotFoundException();
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} task`;
-  }
+    async findAll(projectId: string) {
+        if (await this.Project.exists({ _id: projectId })) {
+            return this.Task.find({ project: projectId });
+        }
+        throw new NotFoundException();
+    }
 
-  update(id: number, updateTaskDto: UpdateTaskDto) {
-    return `This action updates a #${id} task`;
-  }
+    async findOne(projectId: string, taskId: string) {
+        if (
+            (await this.Project.exists({ _id: projectId })) &&
+            (await this.Task.exists({ _id: taskId }))
+        ) {
+            return await this.Task.findById(taskId);
+        }
+        throw new NotFoundException();
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} task`;
-  }
+    async update(
+        projectId: string,
+        taskId: string,
+        updateTaskDto: UpdateTaskDto,
+    ) {
+        if (
+            (await this.Project.exists({ _id: projectId })) &&
+            (await this.Task.exists({ _id: taskId }))
+        ) {
+            return this.Task.findByIdAndUpdate(taskId, updateTaskDto, {
+                new: true,
+            });
+        }
+        throw new NotFoundException();
+    }
+
+    async remove(projectId: string, taskId: string) {
+        if (
+            (await this.Project.exists({ _id: projectId })) &&
+            (await this.Task.exists({ _id: taskId }))
+        ) {
+            return this.Task.findByIdAndDelete(taskId);
+        }
+        throw new NotFoundException();
+    }
 }

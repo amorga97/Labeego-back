@@ -1,34 +1,53 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+    Controller,
+    Get,
+    Post,
+    Body,
+    Patch,
+    Param,
+    Delete,
+    Headers,
+} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+    constructor(private readonly tasksService: TasksService) {}
 
-  @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
-  }
+    @Post(':projectId')
+    create(
+        @Param('projectId') projectId: string,
+        @Body() createTaskDto: CreateTaskDto,
+    ) {
+        return this.tasksService.create(projectId, createTaskDto);
+    }
 
-  @Get()
-  findAll() {
-    return this.tasksService.findAll();
-  }
+    @Get(':projectId')
+    findAll(@Param('projectId') projectId: string) {
+        return this.tasksService.findAll(projectId);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(+id);
-  }
+    @Get(':projectId/:taskId')
+    findOne(@Param('id') projectId: string, @Param('taskId') taskId: string) {
+        return this.tasksService.findOne(projectId, taskId);
+    }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(+id, updateTaskDto);
-  }
+    @Patch(':projectId/:taskId')
+    update(
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+        @Body() updateTaskDto: UpdateTaskDto,
+    ) {
+        return this.tasksService.update(projectId, taskId, updateTaskDto);
+    }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(+id);
-  }
+    @Delete(':projectId')
+    remove(
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+    ) {
+        return this.tasksService.remove(projectId, taskId);
+    }
 }
