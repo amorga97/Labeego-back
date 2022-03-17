@@ -34,7 +34,7 @@ export class ProjectService {
             client: new Types.ObjectId(newProject.client),
             status: 'to do',
         });
-        this.User.findByIdAndUpdate(UserData._id, {
+        await this.User.findByIdAndUpdate(UserData._id, {
             $push: { projects: savedProject._id },
         });
         return savedProject;
@@ -84,7 +84,6 @@ export class ProjectService {
         ) as JwtPayload;
         try {
             if (tokenData.admin) {
-                console.log('pepe');
                 return await this.Project.findOneAndUpdate(
                     { _id: id, teamLeader: tokenData.id },
                     { ...updatedProject, lastUpdate: new Date() },

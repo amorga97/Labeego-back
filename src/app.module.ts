@@ -8,6 +8,7 @@ import { UserCrudModule } from './Users/user.module';
 import { LoginModule } from './login/login.module';
 import { RegisterModule } from './register/register.module';
 import { ProjectModule } from './project/project.module';
+import { TasksModule } from './tasks/tasks.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -24,6 +25,7 @@ import { ProjectModule } from './project/project.module';
         LoginModule,
         RegisterModule,
         ProjectModule,
+        TasksModule,
     ],
     controllers: [AppController],
     providers: [AppService],

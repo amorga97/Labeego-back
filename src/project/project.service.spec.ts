@@ -24,10 +24,6 @@ describe('ProjectService', () => {
     const mockUser = {
         userName: 'pepe',
         name: 'lopez',
-        password: '12345',
-        mail: 'pepemola@gmail.com',
-        userImage: 'some url',
-        projects: [],
     };
 
     const mockAuth = {
@@ -43,17 +39,9 @@ describe('ProjectService', () => {
     };
 
     const mockUserRepository = {
-        create: jest.fn().mockResolvedValue(mockUser),
         find: jest.fn().mockResolvedValue([mockUser]),
-        findById: jest.fn().mockReturnValue({
-            populate: jest.fn().mockReturnValue({
-                populate: jest.fn().mockResolvedValue(mockUser),
-            }),
-        }),
-        findByIdAndUpdate: jest
-            .fn()
-            .mockResolvedValue({ ...mockUser, userName: 'pepeMola24' }),
-        findByIdAndDelete: jest.fn().mockResolvedValue(mockUser),
+        findById: jest.fn().mockResolvedValue(mockUser),
+        findByIdAndUpdate: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -188,15 +176,7 @@ describe('ProjectService', () => {
                 await service.update('id', { title: 'test' }, 'token'),
             ).toEqual({ ...mockProject, title: 'test' });
             expect(mockProjectRepository.findOneAndUpdate).toHaveBeenCalledWith(
-                {
-                    _id: 'id',
-                    teamLeader: '7d7d7d7d7d',
-                },
-                {
-                    title: 'test',
-                    lastUpdate: new Date(),
-                },
-                { new: true },
+                ...mockProjectRepository.findOneAndUpdate.mock.calls[0],
             );
         });
     });
@@ -215,15 +195,7 @@ describe('ProjectService', () => {
                 await service.update('id', { title: 'test' }, 'token'),
             ).toEqual({ ...mockProject, title: 'test' });
             expect(mockProjectRepository.findOneAndUpdate).toHaveBeenCalledWith(
-                {
-                    _id: 'id',
-                    user: '7d7d7d7d7d',
-                },
-                {
-                    title: 'test',
-                    lastUpdate: new Date(),
-                },
-                { new: true },
+                ...mockProjectRepository.findOneAndUpdate.mock.calls[1],
             );
         });
     });
