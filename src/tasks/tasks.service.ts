@@ -66,6 +66,11 @@ export class TasksService {
             (await this.Project.exists({ _id: projectId })) &&
             (await this.Task.exists({ _id: taskId }))
         ) {
+            this.Project.findByIdAndUpdate(projectId, {
+                $pull: {
+                    tasks: taskId,
+                },
+            });
             return this.Task.findByIdAndDelete(taskId);
         }
         throw new NotFoundException();
