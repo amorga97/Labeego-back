@@ -6,7 +6,6 @@ import {
     Patch,
     Param,
     Delete,
-    Headers,
 } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
@@ -43,7 +42,7 @@ export class TasksController {
         return this.tasksService.update(projectId, taskId, updateTaskDto);
     }
 
-    @Delete(':projectId')
+    @Delete(':projectId/:taskId')
     remove(
         @Param('projectId') projectId: string,
         @Param('taskId') taskId: string,

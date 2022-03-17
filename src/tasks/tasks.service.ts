@@ -18,6 +18,7 @@ export class TasksService {
             const savedTask = await this.Task.create({
                 ...taskData,
                 project: projectId,
+                status: 'to do',
             });
             await this.Project.findByIdAndUpdate(projectId, {
                 $push: { tasks: savedTask._id },
