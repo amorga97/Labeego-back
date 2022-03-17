@@ -6,7 +6,16 @@ import { ifUser } from 'src/models/user.model';
 @Injectable()
 export class RegisterService {
     constructor(@InjectModel('User') private User: Model<ifUser>) {}
-    registerUser(userToAdd: ifUser) {
-        return this.User.create({ ...userToAdd, admin: true, team: [] });
+    async registerUser(userToAdd: ifUser) {
+        const savedUser = await this.User.create({
+            ...userToAdd,
+            admin: true,
+            team: [],
+        });
+        return this.User.findByIdAndUpdate(
+            savedUser._id,
+            { teamLeader: savedUser._id },
+            { new: true },
+        );
     }
 }

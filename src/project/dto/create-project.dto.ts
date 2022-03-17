@@ -10,11 +10,8 @@ import mongoose from 'mongoose';
 
 export class CreateProjectDto {
     @IsString()
-    @Length(5, 20)
+    @Length(5, 50)
     title: string;
-
-    @IsString()
-    ref: string;
 
     @IsObject()
     user: mongoose.Types.ObjectId;
