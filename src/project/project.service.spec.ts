@@ -1,6 +1,7 @@
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
+import { clientSchema } from '../models/client.model';
 import { projectSchema } from '../models/project.model';
 import { userSchema } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
@@ -44,6 +45,10 @@ describe('ProjectService', () => {
         findByIdAndUpdate: jest.fn(),
     };
 
+    const mockClientRepository = {
+        findByIdAndUpdate: jest.fn(),
+    };
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
@@ -57,6 +62,10 @@ describe('ProjectService', () => {
                         name: 'User',
                         schema: userSchema,
                     },
+                    {
+                        name: 'Client',
+                        schema: clientSchema,
+                    },
                 ]),
             ],
         })
@@ -64,6 +73,8 @@ describe('ProjectService', () => {
             .useValue(mockProjectRepository)
             .overrideProvider(getModelToken('User'))
             .useValue(mockUserRepository)
+            .overrideProvider(getModelToken('Client'))
+            .useValue(mockClientRepository)
             .compile();
 
         service = module.get<ProjectService>(ProjectService);

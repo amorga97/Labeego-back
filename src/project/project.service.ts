@@ -6,6 +6,7 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
+import { ifClient } from 'src/models/client.model';
 import { ifProject } from '../models/project.model';
 import { ifUser } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
@@ -17,6 +18,7 @@ export class ProjectService {
     constructor(
         @InjectModel('Project') private readonly Project: Model<ifProject>,
         @InjectModel('User') private readonly User: Model<ifUser>,
+        @InjectModel('Client') private readonly Client: Model<ifClient>,
         private readonly auth: AuthService,
     ) {}
 
@@ -35,6 +37,9 @@ export class ProjectService {
             status: 'to do',
         });
         await this.User.findByIdAndUpdate(UserData._id, {
+            $push: { projects: savedProject._id },
+        });
+        await this.Client.findByIdAndUpdate(savedProject.client, {
             $push: { projects: savedProject._id },
         });
         return savedProject;
