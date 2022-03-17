@@ -12,7 +12,7 @@ export class ClientsService {
     ) {}
 
     async create(clientData: CreateClientDto) {
-        return await this.Client.create(clientData);
+        return await this.Client.create({ ...clientData, projects: [] });
     }
 
     async findAll() {
