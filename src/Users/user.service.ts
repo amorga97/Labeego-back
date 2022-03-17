@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
 import * as bcrypt from 'bcryptjs';
-import { ifPartialUser, ifUser } from 'src/models/user.model';
+import { ifPartialUser, ifUser } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
 

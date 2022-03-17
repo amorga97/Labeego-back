@@ -1,7 +1,7 @@
 import { ForbiddenException } from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
-import { userSchema } from '../../models/user.model';
+import { userSchema } from '../models/user.model';
 import { RegisterService } from './register.service';
 
 describe('Given RegisterService', () => {
@@ -18,6 +18,7 @@ describe('Given RegisterService', () => {
 
     const mockRepository = {
         create: jest.fn().mockResolvedValue(mockUserToAdd),
+        findByIdAndUpdate: jest.fn().mockResolvedValue(mockUserToAdd),
     };
 
     beforeEach(async () => {
@@ -52,7 +53,7 @@ describe('Given RegisterService', () => {
 
     describe('When calling it with invalid or missing params', () => {
         test('Then it should throw an exception', () => {
-            mockRepository.create.mockImplementation(async () => {
+            mockRepository.findByIdAndUpdate.mockImplementation(async () => {
                 throw new ForbiddenException();
             });
             expect(

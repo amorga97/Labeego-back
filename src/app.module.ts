@@ -5,8 +5,9 @@ import LogsMiddleware from './utils/logs.middleware';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserCrudModule } from './Users/user.module';
-import { LoginModule } from './Users/login/login.module';
-import { RegisterModule } from './Users/register/register.module';
+import { LoginModule } from './login/login.module';
+import { RegisterModule } from './register/register.module';
+import { ProjectModule } from './project/project.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -22,6 +23,7 @@ import { RegisterModule } from './Users/register/register.module';
         UserCrudModule,
         LoginModule,
         RegisterModule,
+        ProjectModule,
     ],
     controllers: [AppController],
     providers: [AppService],
