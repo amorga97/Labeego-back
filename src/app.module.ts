@@ -9,6 +9,7 @@ import { LoginModule } from './login/login.module';
 import { RegisterModule } from './register/register.module';
 import { ProjectModule } from './project/project.module';
 import { TasksModule } from './tasks/tasks.module';
+import { ClientsModule } from './clients/clients.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -26,6 +27,7 @@ import { TasksModule } from './tasks/tasks.module';
         RegisterModule,
         ProjectModule,
         TasksModule,
+        ClientsModule,
     ],
     controllers: [AppController],
     providers: [AppService],
