@@ -84,7 +84,6 @@ export class ProjectService {
         ) as JwtPayload;
         try {
             if (tokenData.admin) {
-                console.log('pepe');
                 return await this.Project.findOneAndUpdate(
                     { _id: id, teamLeader: tokenData.id },
                     { ...updatedProject, lastUpdate: new Date() },

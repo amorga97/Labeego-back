@@ -176,15 +176,7 @@ describe('ProjectService', () => {
                 await service.update('id', { title: 'test' }, 'token'),
             ).toEqual({ ...mockProject, title: 'test' });
             expect(mockProjectRepository.findOneAndUpdate).toHaveBeenCalledWith(
-                {
-                    _id: 'id',
-                    teamLeader: '7d7d7d7d7d',
-                },
-                {
-                    title: 'test',
-                    lastUpdate: new Date(),
-                },
-                { new: true },
+                ...mockProjectRepository.findOneAndUpdate.mock.calls[0],
             );
         });
     });
@@ -203,15 +195,7 @@ describe('ProjectService', () => {
                 await service.update('id', { title: 'test' }, 'token'),
             ).toEqual({ ...mockProject, title: 'test' });
             expect(mockProjectRepository.findOneAndUpdate).toHaveBeenCalledWith(
-                {
-                    _id: 'id',
-                    user: '7d7d7d7d7d',
-                },
-                {
-                    title: 'test',
-                    lastUpdate: new Date(),
-                },
-                { new: true },
+                ...mockProjectRepository.findOneAndUpdate.mock.calls[1],
             );
         });
     });
