@@ -4,7 +4,7 @@ import { ifTask } from 'src/models/task.model';
 
 @Injectable()
 export class Helpers {
-    async createInitialTasks(Card: Model<ifTask>, projectId: string) {
+    async createInitialTasks(Task: Model<ifTask>, projectId: string) {
         const initialTasks = [
             {
                 title: 'estudio del cliente',
@@ -35,7 +35,7 @@ export class Helpers {
                     'la propuesta del proyecto es aprobada por el cliente y se obtiene señal',
             },
         ];
-        const insertResult = await Card.insertMany(
+        const insertResult = await Task.insertMany(
             initialTasks.map((item) => ({
                 ...item,
                 project: projectId,
@@ -43,6 +43,11 @@ export class Helpers {
             })),
             { rawResult: true },
         );
-        return insertResult.insertedIds;
+        const idArray: string[] = [];
+        for (let i = 0; i < insertResult.insertedCount; i++) {
+            idArray.push(insertResult.insertedIds[i].toString());
+        }
+
+        return idArray;
     }
 }
