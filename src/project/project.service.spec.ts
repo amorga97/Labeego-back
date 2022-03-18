@@ -1,11 +1,13 @@
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { Types } from 'mongoose';
+import { taskSchema } from '../models/task.model';
 import { clientSchema } from '../models/client.model';
 import { projectSchema } from '../models/project.model';
 import { userSchema } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { ProjectService } from './project.service';
+import { Helpers } from '../utils/helpers.service';
 
 describe('ProjectService', () => {
     let service: ProjectService;
@@ -19,7 +21,7 @@ describe('ProjectService', () => {
         client: new Types.ObjectId('6231f8c42ba5d8994cfae7f2'),
         status: 'to do',
         lastUpdate: '2022-03-17T09:03:42.228Z',
-        tasks: [],
+        tasks: ['id1', 'id2'],
     };
 
     const mockUser = {
@@ -31,12 +33,21 @@ describe('ProjectService', () => {
         validateToken: jest.fn(),
     };
 
+    const mockHelpers = {
+        createInitialTasks: jest.fn().mockResolvedValue(['id1', 'id2']),
+    };
+
     const mockProjectRepository = {
         create: jest.fn().mockResolvedValue(mockProject),
         find: jest.fn().mockResolvedValue([mockProject]),
         findOne: jest.fn(),
         findOneAndUpdate: jest.fn(),
         findOneAndDelete: jest.fn(),
+        findByIdAndUpdate: jest
+            .fn()
+            .mockReturnValue({
+                populate: jest.fn().mockResolvedValue(mockProject),
+            }),
     };
 
     const mockUserRepository = {
@@ -49,11 +60,14 @@ describe('ProjectService', () => {
         findByIdAndUpdate: jest.fn(),
     };
 
+    const mockTaskRepository = {};
+
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
             providers: [
                 ProjectService,
                 { provide: AuthService, useValue: mockAuth },
+                { provide: Helpers, useValue: mockHelpers },
             ],
             imports: [
                 MongooseModule.forFeature([
@@ -66,6 +80,10 @@ describe('ProjectService', () => {
                         name: 'Client',
                         schema: clientSchema,
                     },
+                    {
+                        name: 'Task',
+                        schema: taskSchema,
+                    },
                 ]),
             ],
         })
@@ -75,6 +93,8 @@ describe('ProjectService', () => {
             .useValue(mockUserRepository)
             .overrideProvider(getModelToken('Client'))
             .useValue(mockClientRepository)
+            .overrideProvider(getModelToken('Task'))
+            .useValue(mockTaskRepository)
             .compile();
 
         service = module.get<ProjectService>(ProjectService);

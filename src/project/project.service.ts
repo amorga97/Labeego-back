@@ -6,7 +6,9 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
-import { ifClient } from 'src/models/client.model';
+import { ifClient } from '../models/client.model';
+import { ifTask } from '../models/task.model';
+import { Helpers } from '../utils/helpers.service';
 import { ifProject } from '../models/project.model';
 import { ifUser } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
@@ -19,7 +21,9 @@ export class ProjectService {
         @InjectModel('Project') private readonly Project: Model<ifProject>,
         @InjectModel('User') private readonly User: Model<ifUser>,
         @InjectModel('Client') private readonly Client: Model<ifClient>,
+        @InjectModel('Task') private readonly Task: Model<ifTask>,
         private readonly auth: AuthService,
+        private readonly helpers: Helpers,
     ) {}
 
     async create(newProject: CreateProjectDto, token: string) {
@@ -36,13 +40,24 @@ export class ProjectService {
             client: new Types.ObjectId(newProject.client),
             status: 'to do',
         });
+        const initialTasks = await this.helpers.createInitialTasks(
+            this.Task,
+            savedProject._id.toString(),
+        );
+        const projectWithTasks = await this.Project.findByIdAndUpdate(
+            savedProject._id,
+            {
+                tasks: [...initialTasks],
+            },
+            { new: true },
+        ).populate('tasks', { __v: 0 });
         await this.User.findByIdAndUpdate(UserData._id, {
             $push: { projects: savedProject._id },
         });
         await this.Client.findByIdAndUpdate(savedProject.client, {
             $push: { projects: savedProject._id },
         });
-        return savedProject;
+        return projectWithTasks;
     }
 
     async findAll(token: string) {
