@@ -10,6 +10,7 @@ import { RegisterModule } from './register/register.module';
 import { ProjectModule } from './project/project.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ClientsModule } from './clients/clients.module';
+import { IsAuth } from './middlewares/is-auth.middleware';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -35,5 +36,8 @@ import { ClientsModule } from './clients/clients.module';
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
         consumer.apply(LogsMiddleware).forRoutes('*');
+        consumer
+            .apply(IsAuth)
+            .forRoutes('users', 'projects', 'tasks', 'clients');
     }
 }
