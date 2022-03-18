@@ -2,8 +2,6 @@ import { Module, MiddlewareConsumer } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import LogsMiddleware from './utils/logs.middleware';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { UserCrudModule } from './users/user.module';
 import { LoginModule } from './login/login.module';
 import { RegisterModule } from './register/register.module';
@@ -30,8 +28,6 @@ import { IsAuth } from './middlewares/is-auth.middleware';
         TasksModule,
         ClientsModule,
     ],
-    controllers: [AppController],
-    providers: [AppService],
 })
 export class AppModule {
     configure(consumer: MiddlewareConsumer) {
