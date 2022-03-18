@@ -12,6 +12,7 @@ describe('AppController (e2e)', () => {
     let adminId: string;
     let userId: string;
     let clientId: string;
+    let projectId: string;
 
     const mockAdmin = {
         userName: 'admin123',
@@ -36,6 +37,12 @@ describe('AppController (e2e)', () => {
         },
         email: 'client@gmail.com',
         name: 'test client',
+    };
+
+    const mockProject = {
+        title: 'test project',
+        description: 'Project description for a test project',
+        client: clientId,
     };
 
     beforeAll(async () => {
@@ -245,6 +252,67 @@ describe('AppController (e2e)', () => {
         expect(response.body.name).toBe('updated client');
     });
 
+    test('/projects (POST)', async () => {
+        const response = await request(app.getHttpServer())
+            .post('/projects/new')
+            .send(mockProject)
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(201);
+        expect(response.body.tasks).toHaveLength(6);
+        projectId = response.body._id.toString();
+    });
+
+    test('/projects (POST) invalid data', async () => {
+        const response = await request(app.getHttpServer())
+            .post('/projects/new')
+            .send({ title: '' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    test('/projects/:id (PATCH)', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/projects/${projectId}`)
+            .send({ title: 'updated project' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.title).toBe('updated project');
+    });
+
+    test('/projects/:id (PATCH) non admin and not own project', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/projects/${projectId}`)
+            .send({ title: 'updated project' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.body).toEqual({});
+    });
+
+    test('/projects/:id (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/projects/${projectId}`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.title).toBe('updated project');
+    });
+
+    test('/projects (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/projects`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('length');
+    });
+
     // DANGER!!! //
     // DANGER!!! //
     // CODE ABOVE THIS LINE!!!!! //
@@ -268,6 +336,20 @@ describe('AppController (e2e)', () => {
     test('/clients/:id (DELETE)', async () => {
         const response = await request(app.getHttpServer())
             .delete(`/clients/${clientId}`)
+            .set('Authorization', `bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+    });
+
+    test('/projects/:id (DELETE) non admin', async () => {
+        const response = await request(app.getHttpServer())
+            .delete(`/projects/${projectId}`)
+            .set('Authorization', `bearer ${nonAdminToken}`);
+        expect(response.status).toBe(401);
+    });
+
+    test('/projects/:id (DELETE)admin', async () => {
+        const response = await request(app.getHttpServer())
+            .delete(`/projects/${projectId}`)
             .set('Authorization', `bearer ${adminToken}`);
         expect(response.status).toBe(200);
     });
