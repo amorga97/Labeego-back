@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    NotFoundException,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { Model, Types } from 'mongoose';
@@ -46,7 +50,11 @@ export class UserCrudService {
     }
 
     async update(id: string, body: ifPartialUser) {
-        return await this.User.findByIdAndUpdate(id, body, { new: true });
+        const response = await this.User.findByIdAndUpdate(id, body, {
+            new: true,
+        });
+        if (!response) throw new NotFoundException();
+        return response;
     }
 
     async remove(id: string, token: string) {

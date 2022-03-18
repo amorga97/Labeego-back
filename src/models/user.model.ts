@@ -10,6 +10,7 @@ export const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         lowercase: true,
+        unique: true,
         minlength: 3,
         maxlength: 15,
     },

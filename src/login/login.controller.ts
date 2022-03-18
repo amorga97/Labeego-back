@@ -2,7 +2,7 @@ import { Body, Controller, Post } from '@nestjs/common';
 import { AuthService } from '../utils/auth.service';
 import { LoginService } from './login.service';
 
-@Controller('users/login')
+@Controller('/login')
 export class LoginController {
     constructor(
         private readonly LoginServ: LoginService,
