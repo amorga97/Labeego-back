@@ -348,12 +348,69 @@ describe('AppController (e2e)', () => {
         expect(response.body).toHaveProperty('length');
     });
 
+    test('/tasks/:projectId (GET) bad projectId', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/tasks/${projectId + '123'}`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
     test('/tasks/:projectId/:taskId (GET)', async () => {
         const response = await request(app.getHttpServer())
             .get(`/tasks/${projectId}/${taskId}`)
             .set('Authorization', `bearer ${adminToken}`);
 
         expect(response.status).toBe(200);
+    });
+
+    test('/tasks/:projectId/:taskId (GET) bad projectId or taskId', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/tasks/${projectId}/${taskId + '123'}`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    test('/tasks/:projectId/:taskId (PATCH)', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/tasks/${projectId}/${taskId}`)
+            .send({ title: 'updated task' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.title).toBe('updated task');
+    });
+
+    test('/tasks/:projectId/:taskId (PATCH) bad taskId or projectID', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/tasks/${projectId + '123'}/${taskId}`)
+            .send({ title: 'updated task' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    test('/tasks/:projectId/:taskId (DELETE)', async () => {
+        const response = await request(app.getHttpServer())
+            .delete(`/tasks/${projectId}/${taskId}`)
+            .send({ title: 'updated task' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+    });
+
+    test('/tasks/:projectId/:taskId (DELETE) bad taskId or projectId', async () => {
+        const response = await request(app.getHttpServer())
+            .delete(`/tasks/${projectId + '123'}/${taskId}`)
+            .send({ title: 'updated task' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
     });
 
     // DANGER!!! //
