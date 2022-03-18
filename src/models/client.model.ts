@@ -24,6 +24,7 @@ export const clientSchema = new mongoose.Schema({
 export interface ifClient {
     _id?: mongoose.Types.ObjectId;
     name: string;
+    email: string;
     address: {
         street: string;
         number: number;
@@ -34,6 +35,7 @@ export interface ifClient {
 export interface ifPartialClient {
     _id?: mongoose.Types.ObjectId;
     name?: string;
+    email?: string;
     address?: {
         street?: string;
         number?: number;

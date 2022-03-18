@@ -34,6 +34,7 @@ describe('AppController (e2e)', () => {
             street: 'test street',
             number: 23,
         },
+        email: 'client@gmail.com',
         name: 'test client',
     };
 
@@ -177,6 +178,7 @@ describe('AppController (e2e)', () => {
             .send(mockClient)
             .set('Accept', 'application/json')
             .set('Authorization', `bearer ${adminToken}`);
+
         expect(response.status).toBe(201);
         clientId = response.body._id.toString();
     });
@@ -184,9 +186,10 @@ describe('AppController (e2e)', () => {
     test('/clients (POST) invalid data', async () => {
         const response = await request(app.getHttpServer())
             .post('/clients')
-            .send({ name: '' })
+            .send(mockClient)
             .set('Accept', 'application/json')
             .set('Authorization', `bearer ${adminToken}`);
+
         expect(response.status).toBe(500);
     });
 
@@ -203,6 +206,43 @@ describe('AppController (e2e)', () => {
             .set('Accept', 'application/json')
             .set('Authorization', `bearer ${adminToken}`);
         expect(response.status).toBe(500);
+    });
+
+    test('/clients (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/clients/`)
+            .set('Authorization', `bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+    });
+
+    test('/clients (GET)', async () => {
+        const response = await request(app.getHttpServer()).get(`/clients/`);
+
+        expect(response.status).toBe(401);
+    });
+
+    test('/clients/:id (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/clients/${clientId}`)
+            .set('Authorization', `bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+    });
+
+    test('/clients/:id (GET)', async () => {
+        const response = await request(app.getHttpServer()).get(
+            `/clients/${clientId}`,
+        );
+        expect(response.status).toBe(401);
+    });
+
+    test('/clients/:id (PATCH)', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/clients/${clientId}`)
+            .send({ name: 'updated client' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+        expect(response.body.name).toBe('updated client');
     });
 
     // DANGER!!! //
@@ -222,6 +262,13 @@ describe('AppController (e2e)', () => {
         const response = await request(app.getHttpServer())
             .delete(`/users/${userId}`)
             .set('Authorization', `bearer ${nonAdminToken}`);
+        expect(response.status).toBe(200);
+    });
+
+    test('/clients/:id (DELETE)', async () => {
+        const response = await request(app.getHttpServer())
+            .delete(`/clients/${clientId}`)
+            .set('Authorization', `bearer ${adminToken}`);
         expect(response.status).toBe(200);
     });
 });
