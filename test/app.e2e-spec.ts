@@ -13,6 +13,7 @@ describe('AppController (e2e)', () => {
     let userId: string;
     let clientId: string;
     let projectId: string;
+    let taskId: string;
 
     const mockAdmin = {
         userName: 'admin123',
@@ -43,6 +44,10 @@ describe('AppController (e2e)', () => {
         title: 'test project',
         description: 'Project description for a test project',
         client: clientId,
+    };
+
+    const mockTask = {
+        title: 'test task',
     };
 
     beforeAll(async () => {
@@ -311,6 +316,44 @@ describe('AppController (e2e)', () => {
 
         expect(response.status).toBe(200);
         expect(response.body).toHaveProperty('length');
+    });
+
+    test('/tasks/:projectId (POST)', async () => {
+        const response = await request(app.getHttpServer())
+            .post(`/tasks/${projectId}`)
+            .send(mockTask)
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(201);
+        taskId = response.body._id.toString();
+    });
+
+    test('/tasks/:projectId (POST) bad projectId', async () => {
+        const response = await request(app.getHttpServer())
+            .post(`/tasks/${projectId + '123'}`)
+            .send(mockTask)
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    test('/tasks/:projectId (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/tasks/${projectId}`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('length');
+    });
+
+    test('/tasks/:projectId/:taskId (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/tasks/${projectId}/${taskId}`)
+            .set('Authorization', `bearer ${adminToken}`);
+
+        expect(response.status).toBe(200);
     });
 
     // DANGER!!! //

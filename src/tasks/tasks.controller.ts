@@ -29,7 +29,10 @@ export class TasksController {
     }
 
     @Get(':projectId/:taskId')
-    findOne(@Param('id') projectId: string, @Param('taskId') taskId: string) {
+    findOne(
+        @Param('projectId') projectId: string,
+        @Param('taskId') taskId: string,
+    ) {
         return this.tasksService.findOne(projectId, taskId);
     }
 
