@@ -4,7 +4,7 @@ import { ifUser } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { RegisterService } from './register.service';
 
-@Controller('users/register')
+@Controller('/register')
 export class RegisterController {
     constructor(
         private readonly Service: RegisterService,
