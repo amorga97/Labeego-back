@@ -7,6 +7,8 @@ import { projectSchema } from '../models/project.model';
 import { AuthService } from '../utils/auth.service';
 import { userSchema } from '../models/user.model';
 import { clientSchema } from '../models/client.model';
+import { Helpers } from '../utils/helpers.service';
+import { taskSchema } from '../models/task.model';
 
 @Module({
     imports: [
@@ -15,9 +17,10 @@ import { clientSchema } from '../models/client.model';
             { name: 'Project', schema: projectSchema },
             { name: 'User', schema: userSchema },
             { name: 'Client', schema: clientSchema },
+            { name: 'Task', schema: taskSchema },
         ]),
     ],
     controllers: [ProjectController],
-    providers: [ProjectService, AuthService],
+    providers: [ProjectService, AuthService, Helpers],
 })
 export class ProjectModule {}
