@@ -196,6 +196,15 @@ describe('AppController (e2e)', () => {
         expect(response.status).toBe(401);
     });
 
+    test('/clients (POST) invalid data', async () => {
+        const response = await request(app.getHttpServer())
+            .post(`/clients/`)
+            .send({ name: '' })
+            .set('Accept', 'application/json')
+            .set('Authorization', `bearer ${adminToken}`);
+        expect(response.status).toBe(500);
+    });
+
     // DANGER!!! //
     // DANGER!!! //
     // CODE ABOVE THIS LINE!!!!! //
