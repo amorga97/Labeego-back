@@ -117,11 +117,7 @@ describe('UserCrudService', () => {
 
     describe('When calling service.update with the id of an inexistent user', () => {
         test('Then it should throw an exception', async () => {
-            mockRepository.findByIdAndUpdate.mockImplementationOnce(
-                async () => {
-                    throw new NotFoundException();
-                },
-            );
+            mockRepository.findByIdAndUpdate.mockResolvedValue(null);
 
             expect(async () => {
                 await service.update('', { userName: 'pepeMola24' });
