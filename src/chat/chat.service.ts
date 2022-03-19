@@ -1,11 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { JwtPayload } from 'jsonwebtoken';
 import { AuthService } from '../utils/auth.service';
 import { UpdateChatDto } from './dto/update-chat.dto';
 import { ifChat } from '../models/chat.model';
-
 @Injectable()
 export class ChatService {
     constructor(
@@ -19,14 +18,15 @@ export class ChatService {
             process.env.SECRET,
         ) as JwtPayload;
         const chats = await this.Chat.find({
-            users: { $in: { id: tokenData.id } },
+            users: { $elemMatch: { _id: new Types.ObjectId(tokenData.id) } },
         });
-        if (!chats) throw new NotFoundException();
+        if (!chats.length) throw new NotFoundException();
         return chats;
     }
 
     async findOne(id: string) {
-        if (this.Chat.exists({ _id: id })) return await this.Chat.findById(id);
+        if (await this.Chat.exists({ _id: id }))
+            return await this.Chat.findById(id);
         throw new NotFoundException();
     }
 
@@ -36,17 +36,19 @@ export class ChatService {
             process.env.SECRET,
         ) as JwtPayload;
         if (this.Chat.exists({ _id: id })) {
-            return await this.Chat.findByIdAndUpdate(id, {
-                messages: {
+            return await this.Chat.findByIdAndUpdate(
+                id,
+                {
                     $push: {
                         messages: {
                             date: new Date(),
-                            text: newMessage,
+                            text: newMessage.text,
                             sender: tokenData.id,
                         },
                     },
                 },
-            });
+                { new: true },
+            );
         }
         throw new NotFoundException();
     }

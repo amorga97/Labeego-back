@@ -36,6 +36,6 @@ export class AppModule {
         consumer.apply(LogsMiddleware).forRoutes('*');
         consumer
             .apply(IsAuth)
-            .forRoutes('users', 'projects', 'tasks', 'clients');
+            .forRoutes('users', 'projects', 'tasks', 'clients', 'chat');
     }
 }
