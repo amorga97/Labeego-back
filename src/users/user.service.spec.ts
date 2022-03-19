@@ -34,7 +34,7 @@ describe('UserCrudService', () => {
     };
 
     const mockChatRepository = {
-        create: jest.fn().mockResolvedValue({}),
+        create: jest.fn().mockResolvedValue({ admin: true }),
         deleteMany: jest.fn(),
     };
 
@@ -132,12 +132,14 @@ describe('UserCrudService', () => {
             mockRepository.findByIdAndUpdate.mockResolvedValue({
                 ...mockUser,
                 userName: 'pepeMola24',
+                admin: true,
             });
             expect(
                 await service.update('', { userName: 'pepeMola24' }),
             ).toEqual({
                 ...mockUser,
                 userName: 'pepeMola24',
+                admin: true,
             });
         });
     });
@@ -168,12 +170,16 @@ describe('UserCrudService', () => {
     describe('When calling service.remove with a valid id and a non-admin token', () => {
         test('Then it should return the deleted user', async () => {
             mockAuth.validateToken.mockReturnValue({ admin: false });
+            mockRepository.findByIdAndDelete.mockResolvedValue({
+                ...mockUser,
+                admin: true,
+            });
             const removeResponse = await service.remove(
                 'testId',
                 'bearer testToken',
             );
 
-            expect(removeResponse).toEqual(mockUser);
+            expect(removeResponse).toEqual({ ...mockUser, admin: true });
             expect(mockRepository.findByIdAndUpdate).toHaveBeenCalledTimes(4);
         });
     });

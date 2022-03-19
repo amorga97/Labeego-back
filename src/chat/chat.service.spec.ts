@@ -74,7 +74,7 @@ describe('ChatService', () => {
 
     describe('When calling service.findAll with invalid id in token', () => {
         test('Then it should throw an exception', async () => {
-            mockRepository.find.mockResolvedValue(null);
+            mockRepository.find.mockResolvedValue([]);
             expect(async () => {
                 await service.findAll('token');
             }).rejects.toThrow();
