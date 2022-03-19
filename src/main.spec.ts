@@ -3,7 +3,7 @@ import * as request from 'supertest';
 
 describe('main', () => {
     it('should bootstrap', async () => {
-        const { app, server } = await bootstrap();
+        const { app, server } = await bootstrap(4000);
         const response = await request(server)
             .get('/projects')
             .set(
