@@ -35,7 +35,7 @@ export class ChatService {
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
-        if (this.Chat.exists({ _id: id })) {
+        if (await this.Chat.exists({ _id: id })) {
             return await this.Chat.findByIdAndUpdate(
                 id,
                 {
