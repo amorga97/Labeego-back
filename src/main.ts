@@ -9,4 +9,4 @@ export async function bootstrap() {
     const server = await app.listen(4600);
     return { app, server };
 }
-// bootstrap();
+bootstrap();
