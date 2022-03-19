@@ -1,6 +1,5 @@
 import {
     Injectable,
-    Logger,
     NotFoundException,
     UnauthorizedException,
 } from '@nestjs/common';
@@ -52,13 +51,11 @@ export class UserCrudService {
                 mail: 0,
                 projects: 0,
             });
-            const teamChats = await this.helpers.createTeamChats(
+            await this.helpers.createTeamChats(
                 this.Chat,
                 updatedAdmin.team,
                 updatedAdmin._id,
             );
-            const logger = new Logger();
-            logger.log(teamChats);
             return savedUser;
         }
         throw new UnauthorizedException();

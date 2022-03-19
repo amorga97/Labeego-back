@@ -16,7 +16,9 @@ export class RegisterService {
             savedUser._id,
             {
                 teamLeader: savedUser._id,
-                $push: { team: { name: savedUser.name, id: savedUser._id } },
+                $push: {
+                    team: savedUser._id.toString(),
+                },
             },
             { new: true },
         );
