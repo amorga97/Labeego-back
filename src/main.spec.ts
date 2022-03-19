@@ -19,7 +19,8 @@ describe('main', () => {
                 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYyMzFmOGM0MmJhNWQ4OTk0Y2ZhZTdmMiIsImFkbWluIjp0cnVlLCJpYXQiOjE2NDc2ODYyNDd9.dHHsISVurPcaU2LfV-T-Y1mxAOH2t39sCmp1sVkvytQ',
             )
             .send({});
-        app.close();
+
+        await app.close();
         expect(response.status).toBe(200);
     });
 });

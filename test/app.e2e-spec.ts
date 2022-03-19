@@ -113,7 +113,7 @@ describe('AppController (e2e)', () => {
             .send(mockRegularUser)
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${adminToken}`);
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(500);
     });
 
     test('/users/:id (GET)', async () => {
