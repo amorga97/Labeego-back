@@ -139,6 +139,7 @@ describe('UserCrudService', () => {
             ).toEqual({
                 ...mockUser,
                 userName: 'pepeMola24',
+                admin: true,
             });
         });
     });
