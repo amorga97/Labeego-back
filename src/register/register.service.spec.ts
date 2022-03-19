@@ -1,5 +1,6 @@
 import { ForbiddenException } from '@nestjs/common';
 import { getModelToken, MongooseModule } from '@nestjs/mongoose';
+import { Types } from 'mongoose';
 import { Test, TestingModule } from '@nestjs/testing';
 import { userSchema } from '../models/user.model';
 import { RegisterService } from './register.service';
@@ -17,7 +18,10 @@ describe('Given RegisterService', () => {
     };
 
     const mockRepository = {
-        create: jest.fn().mockResolvedValue(mockUserToAdd),
+        create: jest.fn().mockResolvedValue({
+            ...mockUserToAdd,
+            _id: new Types.ObjectId('6236033b7db8d6f41bd6463f'),
+        }),
         findByIdAndUpdate: jest.fn().mockResolvedValue(mockUserToAdd),
     };
 
