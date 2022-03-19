@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Model } from 'mongoose';
-import { ifTask } from 'src/models/task.model';
+import { ifTask } from '../models/task.model';
 
 @Injectable()
 export class Helpers {
