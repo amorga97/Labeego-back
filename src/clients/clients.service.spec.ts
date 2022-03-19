@@ -69,6 +69,20 @@ describe('ClientsService', () => {
         });
     });
 
+    describe('When calling service.findOne', () => {
+        test('Then it should return all clients in the db', async () => {
+            mockRepository.exists.mockResolvedValue(true);
+            expect(await service.findOne('id')).toBe(mockClient);
+        });
+    });
+
+    describe('When calling service.findOne with an invalid id', () => {
+        test('Then it should throw an exception', async () => {
+            mockRepository.exists.mockResolvedValue(false);
+            expect(async () => await service.findOne('id')).rejects.toThrow();
+        });
+    });
+
     describe('When calling service.update with a valid clientId', () => {
         test('Then it should return the updated client', async () => {
             mockRepository.exists.mockResolvedValue(true);

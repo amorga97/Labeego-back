@@ -7,7 +7,6 @@ import {
     Param,
     Delete,
     Headers,
-    UnauthorizedException,
 } from '@nestjs/common';
 import { UserCrudService } from './user.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
@@ -22,14 +21,10 @@ export class UserController {
         @Body() createUserDto: CreateUserDto,
         @Headers('authorization') token: string,
     ) {
-        try {
-            return await this.userCrudService.create(
-                createUserDto,
-                token.substring(7),
-            );
-        } catch (err) {
-            throw new UnauthorizedException();
-        }
+        return await this.userCrudService.create(
+            createUserDto,
+            token.substring(7),
+        );
     }
 
     @Get()

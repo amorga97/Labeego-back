@@ -113,7 +113,7 @@ describe('AppController (e2e)', () => {
             .send(mockRegularUser)
             .set('Accept', 'application/json')
             .set('Authorization', `Bearer ${adminToken}`);
-        expect(response.status).toBe(401);
+        expect(response.status).toBe(500);
     });
 
     test('/users/:id (GET)', async () => {
@@ -412,12 +412,6 @@ describe('AppController (e2e)', () => {
 
         expect(response.status).toBe(500);
     });
-
-    // DANGER!!! //
-    // DANGER!!! //
-    // CODE ABOVE THIS LINE!!!!! //
-    // DANGER!!! //
-    // DANGER!!! //
 
     test('/users/:id (DELETE) admin', async () => {
         const response = await request(app.getHttpServer())
