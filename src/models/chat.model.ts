@@ -9,7 +9,6 @@ export interface ifMessage {
     date: string;
     text: string;
     sender: mongoose.Types.ObjectId;
-    senderName: string;
 }
 
 export interface ifChatUser {
