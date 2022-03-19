@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
+import { ifChat } from '../models/chat.model';
+import { ifPartialUser } from '../models/user.model';
 import { ifTask } from '../models/task.model';
 
 @Injectable()
@@ -49,5 +51,27 @@ export class Helpers {
         }
 
         return idArray;
+    }
+
+    async createTeamChats(
+        Chat: Model<ifChat>,
+        teamIds: ifPartialUser[],
+        teamLeader: Types.ObjectId,
+    ) {
+        const chats = [];
+        teamIds.forEach(async (item, index) => {
+            if (index < teamIds.length - 1) {
+                for (let i = index + 1; i < teamIds.length; i++) {
+                    chats.push(
+                        await Chat.create({
+                            users: [{ ...item }, { ...teamIds[i] }],
+                            messages: [],
+                            teamLeader,
+                        }),
+                    );
+                }
+            }
+        });
+        return chats;
     }
 }

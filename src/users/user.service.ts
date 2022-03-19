@@ -10,12 +10,16 @@ import * as bcrypt from 'bcryptjs';
 import { ifPartialUser, ifUser } from '../models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { CreateUserDto } from './dto/create-user-crud.dto';
+import { Helpers } from '../utils/helpers.service';
+import { ifChat } from '../models/chat.model';
 
 @Injectable()
 export class UserCrudService {
     constructor(
         @InjectModel('User') private readonly User: Model<ifUser>,
+        @InjectModel('Chat') private readonly Chat: Model<ifChat>,
         private readonly auth: AuthService,
+        private readonly helpers: Helpers,
     ) {}
 
     async create(createUserDto: CreateUserDto, token: string) {
@@ -31,9 +35,27 @@ export class UserCrudService {
                 admin: false,
                 projects: [],
             });
-            await this.User.findByIdAndUpdate(adminData.id, {
-                $push: { team: savedUser._id },
+            const updatedAdmin = await this.User.findByIdAndUpdate(
+                adminData.id,
+                {
+                    $push: { team: savedUser._id },
+                },
+                { new: true },
+            ).populate('team', {
+                teamLeader: 0,
+                userName: 0,
+                password: 0,
+                userImage: 0,
+                admin: 0,
+                team: 0,
+                mail: 0,
+                projects: 0,
             });
+            await this.helpers.createTeamChats(
+                this.Chat,
+                updatedAdmin.team,
+                updatedAdmin._id,
+            );
             return savedUser;
         }
         throw new UnauthorizedException();
@@ -67,6 +89,11 @@ export class UserCrudService {
             this.User.findByIdAndUpdate(adminData.id, {
                 $pull: [{ _id: deletedUser._id }],
             });
+        }
+        if (deletedUser.admin) {
+            this.Chat.deleteMany({ teamLeader: deletedUser._id });
+        } else {
+            this.Chat.deleteMany({ users: { $in: { id: deletedUser._id } } });
         }
         return deletedUser;
     }

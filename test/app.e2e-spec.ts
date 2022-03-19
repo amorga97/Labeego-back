@@ -14,6 +14,7 @@ describe('AppController (e2e)', () => {
     let clientId: string;
     let projectId: string;
     let taskId: string;
+    let chatId: string;
 
     const mockAdmin = {
         userName: 'admin123',
@@ -70,8 +71,6 @@ describe('AppController (e2e)', () => {
             .set('Accept', 'application/json');
         expect(response.status).toBe(201);
         adminToken = response.text;
-        console.log(adminToken);
-        console.log(response.text);
         adminId = (
             AuthService.prototype.validateToken(
                 adminToken,
@@ -121,7 +120,7 @@ describe('AppController (e2e)', () => {
             .get(`/users/${adminId}`)
             .set('Authorization', `bearer ${adminToken}`);
         expect(response.status).toBe(200);
-        userId = response.body.team[0]._id;
+        userId = response.body.team[1]._id;
         nonAdminToken = AuthService.prototype.createToken(
             userId,
             response.body,
@@ -392,6 +391,58 @@ describe('AppController (e2e)', () => {
 
         expect(response.status).toBe(500);
     });
+
+    test('/chats/ (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/chat`)
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('length');
+        chatId = response.body[0]._id.toString();
+    });
+
+    test('/chats/:id (GET)', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/chat/${chatId}`)
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body).toHaveProperty('users');
+    });
+
+    test('/chats/:id (GET) bad id', async () => {
+        const response = await request(app.getHttpServer())
+            .get(`/chat/${chatId + '123'}`)
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    test('/chats/:id (PATCH)', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/chat/${chatId}`)
+            .send({ text: 'test message' })
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.status).toBe(200);
+        expect(response.body.messages[0].text).toBe('test message');
+    });
+
+    test('/chats/:id (PATCH) bad id', async () => {
+        const response = await request(app.getHttpServer())
+            .patch(`/chat/${chatId + '123'}`)
+            .send({ text: 'test message' })
+            .set('Authorization', `bearer ${nonAdminToken}`);
+
+        expect(response.status).toBe(500);
+    });
+
+    //DELETESDELETESDELETESDELETES
+    //DELETESDELETESDELETESDELETES
+    //DELETESDELETESDELETESDELETES
+    //DELETESDELETESDELETESDELETES
+    //DELETESDELETESDELETESDELETES
 
     test('/tasks/:projectId/:taskId (DELETE)', async () => {
         const response = await request(app.getHttpServer())

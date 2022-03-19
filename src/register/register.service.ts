@@ -14,7 +14,12 @@ export class RegisterService {
         });
         return this.User.findByIdAndUpdate(
             savedUser._id,
-            { teamLeader: savedUser._id },
+            {
+                teamLeader: savedUser._id,
+                $push: {
+                    team: savedUser._id.toString(),
+                },
+            },
             { new: true },
         );
     }

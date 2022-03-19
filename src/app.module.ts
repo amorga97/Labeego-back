@@ -9,6 +9,7 @@ import { ProjectModule } from './project/project.module';
 import { TasksModule } from './tasks/tasks.module';
 import { ClientsModule } from './clients/clients.module';
 import { IsAuth } from './middlewares/is-auth.middleware';
+import { ChatModule } from './chat/chat.module';
 @Module({
     imports: [
         ConfigModule.forRoot(),
@@ -27,6 +28,7 @@ import { IsAuth } from './middlewares/is-auth.middleware';
         ProjectModule,
         TasksModule,
         ClientsModule,
+        ChatModule,
     ],
 })
 export class AppModule {
@@ -34,6 +36,6 @@ export class AppModule {
         consumer.apply(LogsMiddleware).forRoutes('*');
         consumer
             .apply(IsAuth)
-            .forRoutes('users', 'projects', 'tasks', 'clients');
+            .forRoutes('users', 'projects', 'tasks', 'clients', 'chat');
     }
 }

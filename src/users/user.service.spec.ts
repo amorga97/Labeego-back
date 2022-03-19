@@ -4,6 +4,8 @@ import { AuthService } from '../utils/auth.service';
 import { userSchema } from '../models/user.model';
 import { UserCrudService } from './user.service';
 import { NotFoundException } from '@nestjs/common';
+import { chatSchema } from '../models/chat.model';
+import { Helpers } from '../utils/helpers.service';
 
 describe('UserCrudService', () => {
     const mockUser = {
@@ -31,8 +33,17 @@ describe('UserCrudService', () => {
         findByIdAndDelete: jest.fn().mockResolvedValue(mockUser),
     };
 
+    const mockChatRepository = {
+        create: jest.fn().mockResolvedValue({}),
+        deleteMany: jest.fn(),
+    };
+
     const mockAuth = {
         validateToken: jest.fn(),
+    };
+
+    const mockHelpers = {
+        createTeamChats: jest.fn(),
     };
 
     beforeEach(async () => {
@@ -43,15 +54,22 @@ describe('UserCrudService', () => {
                     provide: AuthService,
                     useValue: mockAuth,
                 },
+                {
+                    provide: Helpers,
+                    useValue: mockHelpers,
+                },
             ],
             imports: [
                 MongooseModule.forFeature([
                     { name: 'User', schema: userSchema },
+                    { name: 'Chat', schema: chatSchema },
                 ]),
             ],
         })
             .overrideProvider(getModelToken('User'))
             .useValue(mockRepository)
+            .overrideProvider(getModelToken('Chat'))
+            .useValue(mockChatRepository)
             .compile();
 
         service = module.get<UserCrudService>(UserCrudService);
@@ -64,7 +82,12 @@ describe('UserCrudService', () => {
     describe('When calling service.create with an admin token', () => {
         test('Then it should return the created user', async () => {
             mockAuth.validateToken.mockReturnValue({ admin: true });
-            expect(await service.create(mockUser, '')).toEqual(mockUser);
+            mockRepository.findByIdAndUpdate.mockReturnValue({
+                populate: jest
+                    .fn()
+                    .mockResolvedValue({ ...mockUser, userName: 'pepeMola24' }),
+            }),
+                expect(await service.create(mockUser, '')).toEqual(mockUser);
         });
     });
 
@@ -106,6 +129,10 @@ describe('UserCrudService', () => {
 
     describe('When calling service.update with a valid id and params', () => {
         test('Then it should return the user updated', async () => {
+            mockRepository.findByIdAndUpdate.mockResolvedValue({
+                ...mockUser,
+                userName: 'pepeMola24',
+            });
             expect(
                 await service.update('', { userName: 'pepeMola24' }),
             ).toEqual({
