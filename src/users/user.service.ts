@@ -55,6 +55,7 @@ export class UserCrudService {
             const teamChats = await this.helpers.createTeamChats(
                 this.Chat,
                 updatedAdmin.team,
+                updatedAdmin._id,
             );
             const logger = new Logger();
             logger.log(teamChats);
@@ -91,6 +92,11 @@ export class UserCrudService {
             this.User.findByIdAndUpdate(adminData.id, {
                 $pull: [{ _id: deletedUser._id }],
             });
+        }
+        if (deletedUser.admin) {
+            this.Chat.deleteMany({ teamLeader: deletedUser._id });
+        } else {
+            this.Chat.deleteMany({ users: { $in: { id: deletedUser._id } } });
         }
         return deletedUser;
     }
