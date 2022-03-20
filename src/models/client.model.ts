@@ -1,9 +1,9 @@
 import * as mongoose from 'mongoose';
 
-// const isEmail = (email: string) => {
-//     const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-//     return regex.test(email);
-// };
+const isEmail = (email: string) => {
+    const regex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    return regex.test(email);
+};
 
 export const clientSchema = new mongoose.Schema({
     name: { type: String, required: true, minlength: 3, maxlength: 15 },
@@ -11,7 +11,7 @@ export const clientSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
-        // validate: [isEmail, 'You did not enter a valid email adress'],
+        validate: [isEmail, 'You did not enter a valid email adress'],
         unique: true,
     },
     address: {
