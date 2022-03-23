@@ -47,10 +47,18 @@ export class ProjectService {
         const projectWithTasks = await this.Project.findByIdAndUpdate(
             savedProject._id,
             {
-                tasks: [...initialTasks],
+                toDo: [...initialTasks],
             },
             { new: true },
-        ).populate('tasks', { __v: 0 });
+        )
+            .populate('toDo', { __v: 0 })
+            .populate('doing', { __v: 0 })
+            .populate('toReview', { __v: 0 })
+            .populate('done', { __v: 0 })
+            .populate('user', {
+                userImage: 1,
+                name: 1,
+            });
         await this.User.findByIdAndUpdate(UserData._id, {
             $push: { projects: savedProject._id },
         });
@@ -69,11 +77,20 @@ export class ProjectService {
             return await this.Project.find({
                 teamLeader: tokenData.id,
             })
-                .populate('tasks')
-                .populate('user');
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', {
+                    userImage: 1,
+                    name: 1,
+                });
         }
         return await this.Project.find({ user: tokenData.id })
-            .populate('tasks')
+            .populate('toDo', { __v: 0 })
+            .populate('doing', { __v: 0 })
+            .populate('toReview', { __v: 0 })
+            .populate('done', { __v: 0 })
             .populate('user', {
                 userImage: 1,
                 name: 1,
@@ -90,14 +107,22 @@ export class ProjectService {
             projectToReturn = await this.Project.findOne({
                 _id: id,
                 teamLeader: tokenData.id,
-            }).populate('tasks', {
-                __v: 0,
-            });
+            })
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', { __v: 0 });
         }
         projectToReturn = await this.Project.findOne({
             _id: id,
             user: tokenData.id,
-        }).populate('tasks', { __v: 0 });
+        })
+            .populate('toDo', { __v: 0 })
+            .populate('doing', { __v: 0 })
+            .populate('toReview', { __v: 0 })
+            .populate('done', { __v: 0 })
+            .populate('user', { __v: 0 });
 
         if (!projectToReturn) throw new NotFoundException();
 
