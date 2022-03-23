@@ -16,7 +16,19 @@ export class LoginController {
             body.userName,
             body.password,
         );
-
-        return this.Auth.createToken(savedUser.id, savedUser.admin, secret);
+        const token = this.Auth.createToken(
+            savedUser.id,
+            savedUser.admin,
+            secret,
+        );
+        return {
+            id: savedUser._id,
+            name: savedUser.name,
+            userName: savedUser.userName,
+            teamLeader: savedUser.teamLeader,
+            mail: savedUser.mail,
+            admin: savedUser.admin,
+            token,
+        };
     }
 }

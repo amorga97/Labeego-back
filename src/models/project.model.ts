@@ -18,6 +18,7 @@ export const projectSchema = new mongoose.Schema({
     user: {
         type: mongoose.SchemaTypes.ObjectId,
         required: true,
+        ref: 'User',
     },
     client: {
         type: mongoose.SchemaTypes.ObjectId,

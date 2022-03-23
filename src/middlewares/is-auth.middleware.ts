@@ -14,7 +14,7 @@ export class IsAuth implements NestMiddleware {
             AuthService.prototype.validateToken(token, process.env.SECRET);
             next();
         } catch (err) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException(err, err.message);
         }
     }
 }
