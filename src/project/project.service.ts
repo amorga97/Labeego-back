@@ -68,9 +68,16 @@ export class ProjectService {
         if (tokenData.admin) {
             return await this.Project.find({
                 teamLeader: tokenData.id,
-            });
+            })
+                .populate('tasks')
+                .populate('user');
         }
-        return await this.Project.find({ user: tokenData.id });
+        return await this.Project.find({ user: tokenData.id })
+            .populate('tasks')
+            .populate('user', {
+                userImage: 1,
+                name: 1,
+            });
     }
 
     async findOne(id: string, token: string) {
