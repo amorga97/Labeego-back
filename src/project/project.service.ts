@@ -159,6 +159,7 @@ export class ProjectService {
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
+            this.Task.deleteMany({ project: id });
             this.User.findByIdAndUpdate(tokenData.id, {
                 $pull: { projects: id },
             });
@@ -167,6 +168,7 @@ export class ProjectService {
                 teamLeader: tokenData.id,
             });
         } else {
+            this.Task.deleteMany({ project: id });
             this.User.findByIdAndUpdate(tokenData.id, {
                 $pull: { projects: id },
             });
