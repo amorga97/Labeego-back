@@ -34,7 +34,10 @@ export class LoginService {
                 token.substring(7),
                 process.env.SECRET,
             ) as JwtPayload;
-            const savedUser = await this.User.findById(tokenData.id);
+            const savedUser = await this.User.findById(tokenData.id).populate(
+                'team',
+                { name: 1, _id: 1, userImage: 1 },
+            );
             if (!savedUser) {
                 throw new NotFoundException();
             }

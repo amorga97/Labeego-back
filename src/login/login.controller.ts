@@ -32,7 +32,9 @@ export class LoginController {
                 name: savedUser.name,
                 userName: savedUser.userName,
                 teamLeader: savedUser.teamLeader,
+                userImage: savedUser.userImage,
                 mail: savedUser.mail,
+                team: savedUser.team,
                 admin: savedUser.admin,
                 token,
             };
@@ -49,7 +51,9 @@ export class LoginController {
             name: savedUser.name,
             userName: savedUser.userName,
             teamLeader: savedUser.teamLeader,
+            userImage: savedUser.userImage,
             mail: savedUser.mail,
+            team: savedUser.team,
             admin: savedUser.admin,
             token,
         };

@@ -113,16 +113,17 @@ export class ProjectService {
                 .populate('toReview', { __v: 0 })
                 .populate('done', { __v: 0 })
                 .populate('user', { __v: 0 });
+        } else {
+            projectToReturn = await this.Project.findOne({
+                _id: id,
+                user: tokenData.id,
+            })
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', { __v: 0 });
         }
-        projectToReturn = await this.Project.findOne({
-            _id: id,
-            user: tokenData.id,
-        })
-            .populate('toDo', { __v: 0 })
-            .populate('doing', { __v: 0 })
-            .populate('toReview', { __v: 0 })
-            .populate('done', { __v: 0 })
-            .populate('user', { __v: 0 });
 
         if (!projectToReturn) throw new NotFoundException();
 
