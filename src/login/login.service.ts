@@ -18,7 +18,9 @@ export class LoginService {
     ) {}
 
     async login(nameToCheck: string, pwToCheck: string) {
-        const savedUser = await this.User.findOne({ userName: nameToCheck });
+        const savedUser = await this.User.findOne({
+            userName: nameToCheck,
+        }).populate('team', { name: 1, _id: 1, userImage: 1 });
         if (!savedUser) {
             throw new UnauthorizedException();
         } else if (compareSync(pwToCheck, (savedUser as ifUser).password)) {
