@@ -34,6 +34,14 @@ export class ProjectController {
         return this.projectService.findOne(id, token);
     }
 
+    @Delete(':id/appointment')
+    deleteAppointment(
+        @Param('id') id: string,
+        @Headers('Authorization') token: string,
+    ) {
+        return this.projectService.removeAppointment(id, token);
+    }
+
     @Patch(':id')
     update(
         @Param('id') id: string,

@@ -18,7 +18,7 @@ export class Helpers {
                 description: '',
             },
             {
-                title: 'guión intero del presupuesto',
+                title: 'guión interno del presupuesto',
                 description:
                     'estimación del presupuesto del proyecto a nivel interno',
             },

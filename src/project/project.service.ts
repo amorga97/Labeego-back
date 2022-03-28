@@ -37,6 +37,7 @@ export class ProjectService {
             teamLeader: UserData.teamLeader,
             user: UserData._id,
             lastUpdate: new Date(),
+            appointment: [],
             client: new Types.ObjectId(newProject.client),
             status: 'to do',
         });
@@ -146,6 +147,29 @@ export class ProjectService {
             return await this.Project.findOneAndUpdate(
                 { _id: id, user: tokenData.id },
                 { ...updatedProject, lastUpdate: new Date() },
+                { new: true },
+            );
+        } catch (err) {
+            throw new NotFoundException();
+        }
+    }
+
+    async removeAppointment(id: string, token: string) {
+        const tokenData = this.auth.validateToken(
+            token.substring(7),
+            process.env.SECRET,
+        ) as JwtPayload;
+        try {
+            if (tokenData.admin) {
+                return await this.Project.findOneAndUpdate(
+                    { _id: id, teamLeader: tokenData.id },
+                    { $unset: { appointment: '' }, lastUpdate: new Date() },
+                    { new: true },
+                );
+            }
+            return await this.Project.findOneAndUpdate(
+                { _id: id, user: tokenData.id },
+                { $unset: { appointment: '' }, lastUpdate: new Date() },
                 { new: true },
             );
         } catch (err) {

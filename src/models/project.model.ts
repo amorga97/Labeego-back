@@ -28,7 +28,7 @@ export const projectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    appointment: { type: Date, required: false },
+    appointment: { type: [Date], required: false },
     lastUpdate: { type: Date, required: false },
     toDo: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
     doing: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
