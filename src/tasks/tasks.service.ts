@@ -18,11 +18,29 @@ export class TasksService {
             const savedTask = await this.Task.create({
                 ...taskData,
                 project: projectId,
-                status: 'to do',
             });
-            await this.Project.findByIdAndUpdate(projectId, {
-                $push: { tasks: savedTask._id },
-            });
+            switch (savedTask.status) {
+                case 'to-do':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $push: { toDo: savedTask._id },
+                    });
+                    break;
+                case 'doing':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $push: { doing: savedTask._id },
+                    });
+                    break;
+                case 'to-review':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $push: { toReview: savedTask._id },
+                    });
+                    break;
+                case 'done':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $push: { done: savedTask._id },
+                    });
+                    break;
+            }
             return savedTask;
         }
         throw new NotFoundException();
@@ -66,12 +84,32 @@ export class TasksService {
             (await this.Project.exists({ _id: projectId })) &&
             (await this.Task.exists({ _id: taskId }))
         ) {
-            this.Project.findByIdAndUpdate(projectId, {
-                $pull: {
-                    tasks: taskId,
-                },
-            });
-            return this.Task.findByIdAndDelete(taskId);
+            const deletedTask = await this.Task.findByIdAndDelete(taskId);
+
+            switch (deletedTask.status) {
+                case 'to-do':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $pull: { toDo: deletedTask._id },
+                    });
+                    break;
+                case 'doing':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $pull: { doing: deletedTask._id },
+                    });
+                    break;
+                case 'to-review':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $pull: { toReview: deletedTask._id },
+                    });
+                    break;
+                case 'done':
+                    await this.Project.findByIdAndUpdate(projectId, {
+                        $pull: { done: deletedTask._id },
+                    });
+                    break;
+            }
+
+            return deletedTask;
         }
         throw new NotFoundException();
     }
