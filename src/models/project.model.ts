@@ -18,6 +18,7 @@ export const projectSchema = new mongoose.Schema({
     user: {
         type: mongoose.SchemaTypes.ObjectId,
         required: true,
+        ref: 'User',
     },
     client: {
         type: mongoose.SchemaTypes.ObjectId,
@@ -27,9 +28,12 @@ export const projectSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    appointment: { type: Date, required: false },
+    appointment: { type: [Date], required: false },
     lastUpdate: { type: Date, required: false },
-    tasks: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
+    toDo: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
+    doing: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
+    toReview: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
+    done: [{ type: mongoose.SchemaTypes.ObjectId, ref: 'Task' }],
 });
 
 export interface ifProject {
@@ -42,7 +46,10 @@ export interface ifProject {
     status: string;
     appointment: Date;
     lastUpdate: Date;
-    tasks: mongoose.Types.ObjectId[];
+    toDo: mongoose.Types.ObjectId;
+    doing: mongoose.Types.ObjectId;
+    toReview: mongoose.Types.ObjectId;
+    done: mongoose.Types.ObjectId;
 }
 
 export interface ifPartialProject {
@@ -55,5 +62,8 @@ export interface ifPartialProject {
     status?: string;
     appointment?: Date;
     lastUpdate?: Date;
-    tasks?: mongoose.Types.ObjectId[];
+    toDo?: mongoose.Types.ObjectId;
+    doing?: mongoose.Types.ObjectId;
+    toReview?: mongoose.Types.ObjectId;
+    done?: mongoose.Types.ObjectId;
 }

@@ -37,6 +37,7 @@ export class ProjectService {
             teamLeader: UserData.teamLeader,
             user: UserData._id,
             lastUpdate: new Date(),
+            appointment: [],
             client: new Types.ObjectId(newProject.client),
             status: 'to do',
         });
@@ -47,10 +48,18 @@ export class ProjectService {
         const projectWithTasks = await this.Project.findByIdAndUpdate(
             savedProject._id,
             {
-                tasks: [...initialTasks],
+                toDo: [...initialTasks],
             },
             { new: true },
-        ).populate('tasks', { __v: 0 });
+        )
+            .populate('toDo', { __v: 0 })
+            .populate('doing', { __v: 0 })
+            .populate('toReview', { __v: 0 })
+            .populate('done', { __v: 0 })
+            .populate('user', {
+                userImage: 1,
+                name: 1,
+            });
         await this.User.findByIdAndUpdate(UserData._id, {
             $push: { projects: savedProject._id },
         });
@@ -68,9 +77,25 @@ export class ProjectService {
         if (tokenData.admin) {
             return await this.Project.find({
                 teamLeader: tokenData.id,
-            });
+            })
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', {
+                    userImage: 1,
+                    name: 1,
+                });
         }
-        return await this.Project.find({ user: tokenData.id });
+        return await this.Project.find({ user: tokenData.id })
+            .populate('toDo', { __v: 0 })
+            .populate('doing', { __v: 0 })
+            .populate('toReview', { __v: 0 })
+            .populate('done', { __v: 0 })
+            .populate('user', {
+                userImage: 1,
+                name: 1,
+            });
     }
 
     async findOne(id: string, token: string) {
@@ -83,14 +108,23 @@ export class ProjectService {
             projectToReturn = await this.Project.findOne({
                 _id: id,
                 teamLeader: tokenData.id,
-            }).populate('tasks', {
-                __v: 0,
-            });
+            })
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', { __v: 0 });
+        } else {
+            projectToReturn = await this.Project.findOne({
+                _id: id,
+                user: tokenData.id,
+            })
+                .populate('toDo', { __v: 0 })
+                .populate('doing', { __v: 0 })
+                .populate('toReview', { __v: 0 })
+                .populate('done', { __v: 0 })
+                .populate('user', { __v: 0 });
         }
-        projectToReturn = await this.Project.findOne({
-            _id: id,
-            user: tokenData.id,
-        }).populate('tasks', { __v: 0 });
 
         if (!projectToReturn) throw new NotFoundException();
 
@@ -120,6 +154,29 @@ export class ProjectService {
         }
     }
 
+    async removeAppointment(id: string, token: string) {
+        const tokenData = this.auth.validateToken(
+            token.substring(7),
+            process.env.SECRET,
+        ) as JwtPayload;
+        try {
+            if (tokenData.admin) {
+                return await this.Project.findOneAndUpdate(
+                    { _id: id, teamLeader: tokenData.id },
+                    { $unset: { appointment: '' }, lastUpdate: new Date() },
+                    { new: true },
+                );
+            }
+            return await this.Project.findOneAndUpdate(
+                { _id: id, user: tokenData.id },
+                { $unset: { appointment: '' }, lastUpdate: new Date() },
+                { new: true },
+            );
+        } catch (err) {
+            throw new NotFoundException();
+        }
+    }
+
     async remove(id: string, token: string) {
         let deletedProject: ifProject;
         const tokenData = this.auth.validateToken(
@@ -127,6 +184,7 @@ export class ProjectService {
             process.env.SECRET,
         ) as JwtPayload;
         if (tokenData.admin) {
+            this.Task.deleteMany({ project: id });
             this.User.findByIdAndUpdate(tokenData.id, {
                 $pull: { projects: id },
             });
@@ -135,6 +193,7 @@ export class ProjectService {
                 teamLeader: tokenData.id,
             });
         } else {
+            this.Task.deleteMany({ project: id });
             this.User.findByIdAndUpdate(tokenData.id, {
                 $pull: { projects: id },
             });

@@ -56,6 +56,9 @@ export class UserCrudService {
                 updatedAdmin.team,
                 updatedAdmin._id,
             );
+            await this.User.findByIdAndUpdate(savedUser._id, {
+                $push: { team: updatedAdmin.team },
+            });
             return savedUser;
         }
         throw new UnauthorizedException();

@@ -1,22 +1,61 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Headers } from '@nestjs/common';
+import { ifUser } from 'src/models/user.model';
 import { AuthService } from '../utils/auth.service';
 import { LoginService } from './login.service';
 
 @Controller('/login')
 export class LoginController {
     constructor(
-        private readonly LoginServ: LoginService,
+        private readonly loginService: LoginService,
         private readonly Auth: AuthService,
     ) {}
 
     @Post()
-    async login(@Body() body: { password: string; userName: string }) {
+    async login(
+        @Body()
+        body: { password?: string; userName?: string; hasToken: boolean },
+        @Headers('Authorization') receivedToken: string,
+    ) {
         const secret = process.env.SECRET;
-        const savedUser = await this.LoginServ.login(
-            body.userName,
-            body.password,
-        );
+        let savedUser: ifUser;
+        let token: string;
 
-        return this.Auth.createToken(savedUser.id, savedUser.admin, secret);
+        if (body.hasToken) {
+            savedUser = await this.loginService.loginWithToken(receivedToken);
+            token = this.Auth.createToken(
+                savedUser._id.toString(),
+                savedUser.admin,
+                secret,
+            );
+            return {
+                id: savedUser._id,
+                name: savedUser.name,
+                userName: savedUser.userName,
+                teamLeader: savedUser.teamLeader,
+                userImage: savedUser.userImage,
+                mail: savedUser.mail,
+                team: savedUser.team,
+                admin: savedUser.admin,
+                token,
+            };
+        }
+
+        savedUser = await this.loginService.login(body.userName, body.password);
+        token = this.Auth.createToken(
+            savedUser._id.toString(),
+            savedUser.admin,
+            secret,
+        );
+        return {
+            id: savedUser._id,
+            name: savedUser.name,
+            userName: savedUser.userName,
+            teamLeader: savedUser.teamLeader,
+            userImage: savedUser.userImage,
+            mail: savedUser.mail,
+            team: savedUser.team,
+            admin: savedUser.admin,
+            token,
+        };
     }
 }

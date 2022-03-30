@@ -9,30 +9,30 @@ export class Helpers {
     async createInitialTasks(Task: Model<ifTask>, projectId: string) {
         const initialTasks = [
             {
-                title: 'estudio del cliente',
+                title: 'Estudio del cliente',
                 description:
                     '¿qué desea? ¿con que presupuesto se siente cómodo?',
             },
             {
-                title: 'obtención de medidas',
+                title: 'Obtención de medidas',
                 description: '',
             },
             {
-                title: 'guión intero del presupuesto',
+                title: 'Guión interno del presupuesto',
                 description:
                     'estimación del presupuesto del proyecto a nivel interno',
             },
             {
-                title: 'maquetado',
+                title: 'Maquetado',
                 description: 'generación de renders en sketchUp',
             },
             {
-                title: 'propuesta al cliente',
+                title: 'Propuesta al cliente',
                 description:
                     'presentación del proyecto y el presupuesto sujeta a posibles cambios',
             },
             {
-                title: 'consolidación',
+                title: 'Consolidación',
                 description:
                     'la propuesta del proyecto es aprobada por el cliente y se obtiene señal',
             },
