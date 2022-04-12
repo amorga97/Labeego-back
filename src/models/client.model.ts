@@ -19,6 +19,7 @@ export const clientSchema = new mongoose.Schema({
         number: { type: Number, required: true },
     },
     projects: [mongoose.SchemaTypes.ObjectId],
+    teamLeader: { type: mongoose.SchemaTypes.ObjectId, ref: 'User' },
 });
 
 export interface ifClient {
@@ -30,6 +31,7 @@ export interface ifClient {
         number: number;
     };
     projects: mongoose.Types.ObjectId[];
+    teamLeader: mongoose.Types.ObjectId;
 }
 
 export interface ifPartialClient {
@@ -41,4 +43,5 @@ export interface ifPartialClient {
         number?: number;
     };
     projects?: mongoose.Types.ObjectId[];
+    teamLeader?: mongoose.Types.ObjectId;
 }

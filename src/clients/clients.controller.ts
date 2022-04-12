@@ -6,6 +6,7 @@ import {
     Patch,
     Param,
     Delete,
+    Headers,
 } from '@nestjs/common';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
@@ -16,18 +17,21 @@ export class ClientsController {
     constructor(private readonly clientsService: ClientsService) {}
 
     @Post('new')
-    create(@Body() createClientDto: CreateClientDto) {
-        return this.clientsService.create(createClientDto);
+    create(
+        @Body() createClientDto: CreateClientDto,
+        @Headers('Authorization') token: string,
+    ) {
+        return this.clientsService.create(createClientDto, token);
     }
 
     @Get()
-    findAll() {
-        return this.clientsService.findAll();
+    findAll(@Headers('Authorization') token: string) {
+        return this.clientsService.findAll(token);
     }
 
     @Get(':id')
-    findOne(@Param('id') id: string) {
-        return this.clientsService.findOne(id);
+    findOne(@Param('id') id: string, @Headers('Authorization') token: string) {
+        return this.clientsService.findOne(id, token);
     }
 
     @Patch(':id')
