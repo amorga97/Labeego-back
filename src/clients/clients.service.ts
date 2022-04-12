@@ -42,7 +42,13 @@ export class ClientsService {
             token.substring(7),
             process.env.SECRET,
         ) as JwtPayload;
-        return await this.Client.find({ teamLeader: tokenData.id });
+
+        if (tokenData.admin) {
+            return await this.Client.find({ teamLeader: tokenData.id });
+        } else {
+            const user = await this.User.findById(tokenData.id);
+            return await this.Client.find({ teamLeader: user.teamLeader });
+        }
     }
 
     async findOne(id: string, token: string) {
